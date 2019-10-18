@@ -7915,6 +7915,11 @@ declare interface OutputNormalized {
 	strictModuleExceptionHandling?: boolean;
 
 	/**
+	 * The name of the trusted types policy created by webpack to serve bundle chunks. Defaults to 'webpack'.
+	 */
+	trustedTypesPolicyName?: string;
+
+	/**
 	 * A unique name of the webpack build to avoid multiple webpack runtimes to conflict when using globals.
 	 */
 	uniqueName?: string;
