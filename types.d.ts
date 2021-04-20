@@ -7653,6 +7653,11 @@ declare interface Output {
 	strictModuleExceptionHandling?: boolean;
 
 	/**
+	 * The name of the trusted types policy created by webpack to serve bundle chunks. Defaults to 'webpack'.
+	 */
+	trustedTypesPolicyName?: string;
+
+	/**
 	 * If `output.libraryTarget` is set to umd and `output.library` is set, setting this to true will name the AMD module.
 	 */
 	umdNamedDefine?: boolean;
