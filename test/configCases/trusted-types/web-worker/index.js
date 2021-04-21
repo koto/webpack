@@ -1,4 +1,4 @@
-it("should allow to create a WebWorker", async () => {
+it("should load a WebWorker using a TrustedScriptURL", async () => {
     const noop = (i) => i
 	const rules = {
 		createScriptURL: noop,
@@ -12,7 +12,7 @@ it("should allow to create a WebWorker", async () => {
 	const worker = new Worker(new URL("./worker.js", import.meta.url), {
 		type: "module"
 	});
-    expect(createScriptURLSpy.mock.calls[0][0].toString()).toEqual('https://test.cases/path/chunk.web.js');
+    expect(createScriptURLSpy.mock.calls[0][0].toString()).toContain('chunk');
 	expect(createPolicySpy).toHaveBeenCalledWith('webpack', expect.anything())
 
 	worker.postMessage("ok");
@@ -21,6 +21,25 @@ it("should allow to create a WebWorker", async () => {
 			resolve(event.data);
 		};
 	});
-	expect(result).toBe("data: ok, thanks");
+	expect(result).toEqual("data: ok, thanks");
+	await worker.terminate();
+});
+
+it("should use Trusted Types for loading modules inside worker", async () => {
+	const worker = new Worker(new URL("./importingWorker.js", import.meta.url), {
+		type: "module"
+	});
+
+    worker.postMessage("ok");
+	const result = await new Promise(resolve => {
+		worker.onmessage = event => {
+			resolve(event.data);
+		};
+	});
+	expect(result).toEqual({
+        data: "OK",
+        policyName: "webpack",
+        scriptURL: expect.stringContaining("chunk"),
+    });
 	await worker.terminate();
 });
